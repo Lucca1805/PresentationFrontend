@@ -1,0 +1,43 @@
+﻿@page "/PresentationStatistics"
+@inject PresentationService PresentationService
+
+<h3>PresentationStatistics</h3>
+
+<EditForm Model="@PresentationQuery" OnSubmit="QueryPresentationsAsync">
+
+	<div class="form-group">
+		<label for="FromDate">From Date:</label>
+		<InputDate id="FromDate" class="form-control" @bind-Value="PresentationQuery.FromDate" />
+		<ValidationMessage For="@(() => PresentationQuery.FromDate)" />
+	</div>
+
+	<div class="form-group">
+		<label for="ToDate">To Date:</label>
+		<InputDate id="ToDate" class="form-control" @bind-Value="PresentationQuery.ToDate" />
+		<ValidationMessage For="@(() => PresentationQuery.FromDate)" />
+	</div>
+
+	<button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@if (statistics != null)
+{
+	<h4>Number of Presentations: @statistics.Count</h4>
+}
+
+@code {
+	private PresentationFrontend.Models.PresentationStatisticsQuery PresentationQuery = new PresentationStatisticsQuery();
+	private PresentationFrontend.Models.PresentationStatistics statistics;
+
+	private async Task QueryPresentationsAsync()
+	{
+		try
+		{
+			statistics = await PresentationService.GetPresentationStatisticsAsync(PresentationQuery);
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error querying statistics: {ex.Message}");
+		}
+	}
+}

@@ -1,0 +1,40 @@
+﻿@page "/"
+@inject PresentationService PresentationService
+<h3>Presentations</h3>
+
+@if(presentations == null)
+{
+	<p><em>Loading ...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Startdate</th>
+                <th>Enddate</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var presentation in presentations)
+            {
+                <tr>
+                    <td>@presentation.Name</td>
+                    <td>@presentation.Location</td>
+                    <td>@presentation.FromDate.ToShortDateString()</td>
+                    <td>@presentation.ToDate.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@code {
+    private List<PresentationFrontend.Models.Presentation> presentations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        presentations = await PresentationService.GetAllPresentationsAsync();
+    }
+}

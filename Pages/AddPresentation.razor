@@ -1,0 +1,66 @@
+﻿@page "/AddPresentation"
+@inject PresentationService PresentationService
+@inject NavigationManager NavigationManager
+<h3>Add Presentation</h3>
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMessage
+    </div>
+}
+<EditForm Model="@newPresentation" OnSubmit="HandleSubmit">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    <div class="form-group">
+        <label for="name">Name: </label>
+        <InputText id="name" class="form-control" @bind-Value="@newPresentation.Name"/>
+        <ValidationMessage For="@(() => newPresentation.Name)" />
+    </div>
+
+    <div class="form-group">
+        <label for="location">Location:</label>
+        <InputText id="location" class="form-control" @bind-Value="newPresentation.Location" />
+        <ValidationMessage For="@(() => newPresentation.Location)" />
+    </div>
+
+    <div class="form-group">
+        <label for="FromDate">From Date:</label>
+        <InputDate id="FromDate" class="form-control" @bind-Value="newPresentation.FromDate" />
+        <ValidationMessage For="@(() => newPresentation.FromDate)" />
+    </div>
+
+    <div class="form-group">
+        <label for="toDate">to Date:</label>
+        <InputDate id="toDate" class="form-control" @bind-Value="newPresentation.ToDate" />
+        <ValidationMessage For="@(() => newPresentation.ToDate)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+    private PresentationFrontend.Models.Presentation newPresentation = new PresentationFrontend.Models.Presentation();
+    private string? errorMessage;
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            var result = await PresentationService.AddPresentationAsync(newPresentation);
+
+            if (result != null)
+            {
+                NavigationManager.NavigateTo("/", forceLoad: true); 
+            }
+            else
+            {
+                errorMessage = "Presentation Name already exists.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+    }
+}
